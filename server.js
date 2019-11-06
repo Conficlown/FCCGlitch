@@ -30,6 +30,7 @@ app.get("/api/timestamp/", function (req, res) {
 });
 
 app.get("/api/timestamp/:date_string", function (req, res) {
+  // console.log(req.params.date_string);
   var resDT;
   if(req.params.date_string===undefined || req.params.date_string===""){
     resDT = new Date();
@@ -38,27 +39,16 @@ app.get("/api/timestamp/:date_string", function (req, res) {
     if(isNaN(req.params.date_string)){
        resDT = new Date(req.params.date_string);
     }else{
-       resDT = new Date(parseInt(req.params.date_string+"000"));
+       resDT = new Date(parseInt(req.params.date_string));
     }
     // console.log(resDT);
-    res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+    if(resDT.getTime()){
+      res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+    }else{
+      res.json({ error: "Invalid Date"});
+    }
   }
 });
-
- // }else if(isNaN(req.params.date_string)){
- //    console.log('this way');
- //    if(isNaN(Date.parse(req.params.date_string))){
- //      res.json({ unix: null, utc: "Invalid Date"});
- //    }else{
- //      resDT = new Date(req.params.date_string);
- //      res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
- //    }
- //  }else{
- //    resDT = new Date(req.params.date_string);
- //    console.log(resDT);
- //    res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
- //  }
-
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
