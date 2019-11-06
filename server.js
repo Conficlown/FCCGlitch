@@ -1,0 +1,66 @@
+// server.js
+// where your node app starts
+
+// init project
+var express = require('express');
+var app = express();
+
+// enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
+// so that your API is remotely testable by FCC 
+var cors = require('cors');
+app.use(cors({optionSuccessStatus: 200}));  // some legacy browsers choke on 204
+
+// http://expressjs.com/en/starter/static-files.html
+app.use(express.static('public'));
+
+// http://expressjs.com/en/starter/basic-routing.html
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + '/views/index.html');
+});
+
+
+// your first API endpoint... 
+app.get("/api/hello", function (req, res) {
+  res.json({greeting: 'hello API'});
+});
+
+app.get("/api/timestamp/", function (req, res) {
+  var resDT = new Date();
+  res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+});
+
+app.get("/api/timestamp/:date_string", function (req, res) {
+  var resDT;
+  if(req.params.date_string===undefined || req.params.date_string===""){
+    resDT = new Date();
+    res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+  }else {
+    if(isNaN(req.params.date_string)){
+       resDT = new Date(req.params.date_string);
+    }else{
+       resDT = new Date(parseInt(req.params.date_string+"000"));
+    }
+    // console.log(resDT);
+    res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+  }
+});
+
+ // }else if(isNaN(req.params.date_string)){
+ //    console.log('this way');
+ //    if(isNaN(Date.parse(req.params.date_string))){
+ //      res.json({ unix: null, utc: "Invalid Date"});
+ //    }else{
+ //      resDT = new Date(req.params.date_string);
+ //      res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+ //    }
+ //  }else{
+ //    resDT = new Date(req.params.date_string);
+ //    console.log(resDT);
+ //    res.json({ unix: resDT.getTime(), utc: resDT.toUTCString()});
+ //  }
+
+
+// listen for requests :)
+var listener = app.listen(process.env.PORT, function () {
+  console.log('Your app is listening on port ' + listener.address().port);
+});
